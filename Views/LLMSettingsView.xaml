@@ -1,0 +1,117 @@
+<UserControl x:Class="AccessibilityAuditor.Views.LLMSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:AccessibilityAuditor.Views.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="320">
+
+    <!--
+        Settings tab for BYOK AI assistance.
+        MVVM only — the PasswordBox value is passed to SaveKey via code-behind
+        (PasswordBox does not support binding by design in WPF).
+    -->
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:EnumToBoolConverter x:Key="EnumToBool"/>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12" Orientation="Vertical">
+
+            <TextBlock Text="AI Fix Assistance (Optional)"
+                       FontWeight="Bold" FontSize="13" Margin="0,0,0,8"/>
+
+            <!-- Provider selection -->
+            <TextBlock Text="LLM Provider" Margin="0,0,0,6"
+                       x:Name="ProviderLabel"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12"
+                        AutomationProperties.LabeledBy="{Binding ElementName=ProviderLabel}">
+                <RadioButton Content="Anthropic (Claude)"
+                             IsChecked="{Binding SelectedProvider,
+                                 Converter={StaticResource EnumToBool},
+                                 ConverterParameter=Anthropic}"
+                             AutomationProperties.Name="Select Anthropic Claude as LLM provider"
+                             Margin="0,0,16,0"/>
+                <RadioButton Content="OpenAI (GPT-4o)"
+                             IsChecked="{Binding SelectedProvider,
+                                 Converter={StaticResource EnumToBool},
+                                 ConverterParameter=OpenAI}"
+                             AutomationProperties.Name="Select OpenAI GPT-4o as LLM provider"/>
+            </StackPanel>
+
+            <!-- Key status indicator -->
+            <TextBlock Margin="0,0,0,8"
+                       AutomationProperties.LiveSetting="Polite">
+                <Run Text="Status: "/>
+                <Run>
+                    <Run.Style>
+                        <Style TargetType="Run">
+                            <Setter Property="Text" Value="Not configured"/>
+                            <Setter Property="Foreground" Value="#999999"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsKeyConfigured}" Value="True">
+                                    <Setter Property="Text" Value="Configured"/>
+                                    <Setter Property="Foreground" Value="#3DA63D"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Run.Style>
+                </Run>
+            </TextBlock>
+
+            <!-- API key entry -->
+            <TextBlock Text="API Key" Margin="0,0,0,4"
+                       x:Name="ApiKeyLabel"/>
+
+            <PasswordBox x:Name="ApiKeyBox"
+                         Margin="0,0,0,8"
+                         MaxLength="200"
+                         AutomationProperties.LabeledBy="{Binding ElementName=ApiKeyLabel}"
+                         AutomationProperties.Name="Enter your API key"/>
+
+            <!-- Action buttons -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <Button Content="Save Key"
+                        Click="SaveKey_Click"
+                        AutomationProperties.Name="Save API key to Windows Credential Manager"
+                        ToolTip="Save key to Windows Credential Manager"
+                        Margin="0,0,8,0" MinWidth="80" Padding="8,4"/>
+
+                <Button Content="Test Connection"
+                        Command="{Binding TestConnectionCommand}"
+                        AutomationProperties.Name="Test connection to the selected LLM provider"
+                        ToolTip="Send a test request to verify the key works"
+                        Margin="0,0,8,0" MinWidth="80" Padding="8,4"/>
+
+                <Button Content="Remove Key"
+                        Command="{Binding RemoveKeyCommand}"
+                        AutomationProperties.Name="Remove stored API key"
+                        ToolTip="Remove the stored key from Windows Credential Manager"
+                        MinWidth="80" Padding="8,4"/>
+            </StackPanel>
+
+            <!-- Progress indicator -->
+            <ProgressBar IsIndeterminate="True"
+                         Visibility="{Binding IsTesting, Converter={StaticResource BoolToVis}}"
+                         Height="4" Margin="0,0,0,8"
+                         AutomationProperties.Name="Testing connection"/>
+
+            <!-- Status message -->
+            <TextBlock Text="{Binding StatusMessage}"
+                       TextWrapping="Wrap" Margin="0,0,0,12"
+                       AutomationProperties.LiveSetting="Assertive"/>
+
+            <!-- Help text -->
+            <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="11.5">
+                Your API key is stored in Windows Credential Manager and never leaves your machine
+                except in transit to the provider you configure. The audit and all deterministic fixes
+                work without a key — AI assistance is entirely optional.
+            </TextBlock>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

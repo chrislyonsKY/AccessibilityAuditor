@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ArcGIS defaultAssembly="AccessibilityAuditor.dll"
+        defaultNamespace="AccessibilityAuditor"
+        xmlns="http://schemas.esri.com/DADF/Registry"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
+
+  <AddInInfo id="{86189100-1a31-458e-9b16-4ae33c4714a1}" version="2.0" desktopVersion="3.6.0.59527">
+    <Name>AccessibilityAuditor</Name>
+    <Description>Semi-automated WCAG 2.1 Level AA compliance auditing for GIS map products.</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Chris Lyons</Author>
+    <Company>AccessibilityAuditor</Company>
+    <Date>2/26/2026 3:09:47 PM</Date>
+    <Subject>Framework, Map Authoring, Layouts</Subject>
+  </AddInInfo>
+
+  <modules>
+    <insertModule id="AccessibilityAuditor_Module" className="Module1" autoLoad="false"
+                  caption="Accessibility Auditor">
+      <tabs>
+        <tab id="AccessibilityAuditor_Tab" caption="Accessibility">
+          <group refID="AccessibilityAuditor_Group1"/>
+        </tab>
+      </tabs>
+
+      <groups>
+        <group id="AccessibilityAuditor_Group1" caption="Accessibility Auditor" appearsOnAddInTab="true">
+          <button refID="AccessibilityAuditor_AuditDockPane_ShowButton"/>
+        </group>
+      </groups>
+
+      <controls>
+        <button id="AccessibilityAuditor_AuditDockPane_ShowButton"
+                caption="Accessibility Auditor"
+                className="AccessibilityAuditor.ViewModels.AuditDockPane_ShowButton"
+                loadOnClick="true"
+                smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png"
+                largeImage="Images\AccessibilityAuditor32.png"
+                smallDarkImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png"
+                largeDarkImage="DarkImages\AccessibilityAuditor32.png">
+          <tooltip heading="Accessibility Auditor">
+            Open the Accessibility Auditor dockpane to scan maps and layouts for WCAG 2.1 AA compliance issues.
+            <disabledText/>
+          </tooltip>
+        </button>
+      </controls>
+
+      <dockPanes>
+        <dockPane id="AccessibilityAuditor_AuditDockPane"
+                  caption="Accessibility Auditor"
+                  className="AccessibilityAuditor.ViewModels.AuditDockPaneViewModel"
+                  dock="group"
+                  dockWith="esri_core_projectDockPane">
+          <content className="AccessibilityAuditor.Views.AuditDockPaneView"/>
+        </dockPane>
+      </dockPanes>
+
+    </insertModule>
+  </modules>
+</ArcGIS>

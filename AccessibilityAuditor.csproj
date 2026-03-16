@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoWarn>CA1416</NoWarn>
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests\**</DefaultItemExcludes>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="DarkImages\AccessibilityAuditor32.png" />
+    <None Remove="Images\AddInDesktop32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config.daml" />
+    <Content Include="DarkImages\AccessibilityAuditor32.png" />
+    <Content Include="DarkImages\AddInDesktop16.png" />
+    <Content Include="DarkImages\AddInDesktop32.png" />
+    <Content Include="Images\AddInDesktop32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ArcGIS Pro SDK 3.6 — local assembly references from the Pro install directory.
+         When Esri publishes stable NuGet packages (Esri.ArcGISPro.Extensions.*), replace
+         these Reference items with PackageReference items and remove HintPaths. -->
+    <Reference Include="ArcGIS.Desktop.Framework">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Desktop.Framework.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Core">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Core.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Core">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\Core\ArcGIS.Desktop.Core.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Mapping">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\Mapping\ArcGIS.Desktop.Mapping.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Catalog">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\Catalog\ArcGIS.Desktop.Catalog.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Editing">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\Editing\ArcGIS.Desktop.Editing.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Extensions">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\DesktopExtensions\ArcGIS.Desktop.Extensions.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.GeoProcessing">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\GeoProcessing\ArcGIS.Desktop.GeoProcessing.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Layouts">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\Extensions\Layout\ArcGIS.Desktop.Layouts.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Shared.Wpf">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Desktop.Shared.Wpf.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Ribbon.Wpf">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Desktop.Ribbon.Wpf.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.DataGrid.Contrib.Wpf">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Desktop.DataGrid.Contrib.Wpf.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ArcGIS.Desktop.Resources">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ArcGIS.Desktop.Resources.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.ItemIndex">
+      <HintPath>C:\Program Files\ArcGIS\Pro\bin\ESRI.ArcGIS.ItemIndex.dll</HintPath>
+      <CopyLocal>False</CopyLocal>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AccessibilityAuditor.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\AccessibilityAuditor32.png" />
+  </ItemGroup>
+
+  <!-- Digital signature for the .esriAddinX add-in package.
+       Uses Esri's ESRISignAddin.exe which is included with ArcGIS Pro.
+       
+       To create a self-signed cert (one-time, elevated PowerShell):
+         New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=AccessibilityAuditor" -CertStoreLocation Cert:\CurrentUser\My -NotAfter (Get-Date).AddYears(5)
+       To find the thumbprint:
+         Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Format-Table Thumbprint, Subject
+       
+       Signing options:
+         Option A (recommended): Use the Esri Digital Signature Wizard (GUI)
+           "C:\Program Files\ArcGIS\Pro\bin\ESRISignAddin.exe"
+           Browse to the .esriAddInX, select your certificate, and sign.
+         Option B: Automated post-build signing
+           dotnet build -p:CodeSigningThumbprint=YOUR_THUMBPRINT_HERE
+       
+       For target machines to trust self-signed certs, import the public cert:
+         1. Export: certutil -exportPFX -p "" my <THUMBPRINT> AccessibilityAuditor.cer
+         2. On target: Import to Trusted Publishers via certmgr.msc -->
+  <PropertyGroup>
+    <!-- <CodeSigningThumbprint>YOUR_THUMBPRINT_HERE</CodeSigningThumbprint> -->
+    <EsriSignAddinPath Condition="'$(EsriSignAddinPath)' == ''">C:\Program Files\ArcGIS\Pro\bin\ESRISignAddin.exe</EsriSignAddinPath>
+  </PropertyGroup>
+
+  <Target Name="SignAddin" AfterTargets="Build" Condition="'$(CodeSigningThumbprint)' != '' AND Exists('$(EsriSignAddinPath)')">
+    <ItemGroup>
+      <_AddinFile Include="$(OutputPath)**\*.esriAddInX" />
+    </ItemGroup>
+    <Exec Command="&quot;$(EsriSignAddinPath)&quot; -c $(CodeSigningThumbprint) &quot;%(_AddinFile.Identity)&quot;" Condition="@(_AddinFile) != ''" ConsoleToMSBuild="true" />
+    <Message Text="Signed with Esri Digital Signature: %(_AddinFile.Identity)" Importance="high" Condition="@(_AddinFile) != ''" />
+  </Target>
+
+  <!-- Esri SDK targets use CodeTaskFactory which only works with Visual Studio MSBuild (Full),
+       not with dotnet CLI MSBuild (Core). Skip when building via 'dotnet build'; use VS MSBuild
+       (or Build from VS) for add-in packaging (.esriAddinX). -->
+  <Import Project="C:\Program Files\ArcGIS\Pro\bin\Esri.ProApp.SDK.Desktop.targets" Condition="'$(MSBuildRuntimeType)' != 'Core' AND Exists('C:\Program Files\ArcGIS\Pro\bin\Esri.ProApp.SDK.Desktop.targets') AND !Exists('Esri.ArcGISPro.Extensions.targets')" />
+</Project>

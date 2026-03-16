@@ -1,0 +1,167 @@
+<controls:ProWindow x:Class="AccessibilityAuditor.Windows.FindingDetailWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
+    xmlns:converters="clr-namespace:AccessibilityAuditor.Views.Converters"
+    Title="{Binding WindowTitle}"
+    Height="520" Width="650"
+    MinHeight="400" MinWidth="500"
+    WindowStartupLocation="CenterOwner"
+    ShowInTaskbar="False"
+    AutomationProperties.Name="{Binding WindowTitle}">
+
+    <controls:ProWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </controls:ProWindow.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+        <StackPanel>
+
+            <!-- Severity -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8"
+                        AutomationProperties.Name="{Binding SeverityLabel, StringFormat='Severity: {0}'}">
+                <TextBlock Text="{Binding SeverityIcon}" FontFamily="Segoe MDL2 Assets"
+                           Foreground="{Binding SeverityBrush}"
+                           FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding SeverityLabel}" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Criterion -->
+            <TextBlock Text="{Binding CriterionText}" FontSize="13" Opacity="0.65" Margin="0,0,0,12"
+                       AutomationProperties.Name="{Binding CriterionText, StringFormat='Criterion: {0}'}"/>
+
+            <!-- Element + Detail -->
+            <TextBlock Text="Element:" FontWeight="SemiBold" Margin="0,0,0,2" x:Name="ElementLabel"/>
+            <TextBlock Text="{Binding Finding.Element}" TextWrapping="Wrap" Margin="0,0,0,8"
+                       AutomationProperties.LabeledBy="{Binding ElementName=ElementLabel}"/>
+
+            <TextBlock Text="Issue:" FontWeight="SemiBold" Margin="0,0,0,2" x:Name="IssueLabel"/>
+            <TextBlock Text="{Binding Finding.Detail}" TextWrapping="Wrap" Margin="0,0,0,12"
+                       AutomationProperties.LabeledBy="{Binding ElementName=IssueLabel}"/>
+
+            <!-- Color Preview (only shown when color data exists) -->
+            <GroupBox Header="Color Preview" Margin="0,0,0,12"
+                      Visibility="{Binding HasColorData, Converter={StaticResource BoolToVis}}"
+                      AutomationProperties.Name="Color preview and colorblind simulation">
+                <StackPanel Margin="8">
+                    <!-- Normal -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4"
+                                AutomationProperties.Name="{Binding ContrastRatioText, StringFormat='Normal view: contrast ratio {0}'}">
+                        <TextBlock Text="Normal:" Width="95" VerticalAlignment="Center"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding ForegroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="{Binding ForegroundHex}"
+                                AutomationProperties.Name="{Binding ForegroundHex, StringFormat='Foreground color {0}'}"/>
+                        <TextBlock Text="{Binding ForegroundHex}" Margin="4,0,0,0" VerticalAlignment="Center" FontSize="11"
+                                   Opacity="0.65"/>
+                        <TextBlock Text=" on " VerticalAlignment="Center" Margin="4,0"
+                                   Opacity="0.5"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding BackgroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="{Binding BackgroundHex}"
+                                AutomationProperties.Name="{Binding BackgroundHex, StringFormat='Background color {0}'}"/>
+                        <TextBlock Text="{Binding BackgroundHex}" Margin="4,0,0,0" VerticalAlignment="Center" FontSize="11"
+                                   Opacity="0.65"/>
+                        <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontWeight="Bold"
+                                   AutomationProperties.Name="{Binding ContrastRatioText, StringFormat='Contrast ratio: {0}'}">
+                            <Run Text="&#x2192; "/>
+                            <Run Text="{Binding ContrastRatioText, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Protanopia -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4"
+                                AutomationProperties.Name="Protanopia simulation">
+                        <TextBlock Text="Protanopia:" Width="95" VerticalAlignment="Center"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding ProtanForegroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Foreground as seen with protanopia (red-blind)"
+                                AutomationProperties.Name="Protanopia simulated foreground"/>
+                        <TextBlock Text=" on " VerticalAlignment="Center" Margin="4,0"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding ProtanBackgroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Background as seen with protanopia (red-blind)"
+                                AutomationProperties.Name="Protanopia simulated background"/>
+                    </StackPanel>
+
+                    <!-- Deuteranopia -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4"
+                                AutomationProperties.Name="Deuteranopia simulation">
+                        <TextBlock Text="Deuteranopia:" Width="95" VerticalAlignment="Center"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding DeuteranForegroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Foreground as seen with deuteranopia (green-blind)"
+                                AutomationProperties.Name="Deuteranopia simulated foreground"/>
+                        <TextBlock Text=" on " VerticalAlignment="Center" Margin="4,0"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding DeuteranBackgroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Background as seen with deuteranopia (green-blind)"
+                                AutomationProperties.Name="Deuteranopia simulated background"/>
+                    </StackPanel>
+
+                    <!-- Tritanopia -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4"
+                                AutomationProperties.Name="Tritanopia simulation">
+                        <TextBlock Text="Tritanopia:" Width="95" VerticalAlignment="Center"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding TritanForegroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Foreground as seen with tritanopia (blue-blind)"
+                                AutomationProperties.Name="Tritanopia simulated foreground"/>
+                        <TextBlock Text=" on " VerticalAlignment="Center" Margin="4,0"/>
+                        <Border Width="40" Height="24" CornerRadius="2"
+                                Background="{Binding TritanBackgroundBrush}"
+                                BorderBrush="Gray" BorderThickness="1"
+                                ToolTip="Background as seen with tritanopia (blue-blind)"
+                                AutomationProperties.Name="Tritanopia simulated background"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Remediation -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4"
+                        Visibility="{Binding Finding.Remediation, TargetNullValue=Collapsed, FallbackValue=Collapsed}">
+                <TextBlock Text="&#xEA80;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBlock Text="Remediation:" FontWeight="SemiBold" x:Name="RemediationLabel"/>
+            </StackPanel>
+            <TextBlock Text="{Binding Finding.Remediation}" TextWrapping="Wrap"
+                       Foreground="#4D8FD6" Margin="0,0,0,16"
+                       Visibility="{Binding Finding.Remediation, TargetNullValue=Collapsed, FallbackValue=Collapsed}"
+                       AutomationProperties.LabeledBy="{Binding ElementName=RemediationLabel}"/>
+
+            <!-- Action buttons -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                <Button Command="{Binding NavigateCommand}"
+                        Visibility="{Binding CanNavigate, Converter={StaticResource BoolToVis}}"
+                        AutomationProperties.Name="Navigate to element"
+                        ToolTip="Select the source layer or layout element in ArcGIS Pro"
+                        Padding="8,4" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE728;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                   VerticalAlignment="Center" Margin="0,0,4,0" IsHitTestVisible="False"/>
+                        <TextBlock Text="Navigate to Element" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding CopyDetailCommand}"
+                        AutomationProperties.Name="Copy finding detail to clipboard"
+                        ToolTip="Copy finding detail as text to the clipboard"
+                        Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                   VerticalAlignment="Center" Margin="0,0,4,0" IsHitTestVisible="False"/>
+                        <TextBlock Text="Copy Detail" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</controls:ProWindow>

@@ -1,0 +1,210 @@
+<UserControl x:Class="AccessibilityAuditor.Views.AuditDockPaneView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AccessibilityAuditor.Views"
+             xmlns:converters="clr-namespace:AccessibilityAuditor.Views.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="340">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:InverseBoolConverter x:Key="InverseBool"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Target selector + Run button -->
+        <Grid Grid.Row="0" Margin="8,8,8,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Target:" VerticalAlignment="Center" Margin="0,0,8,0"
+                       x:Name="TargetLabel"/>
+
+            <ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedTargetIndex}"
+                      IsEnabled="{Binding IsScanning, Converter={StaticResource InverseBool}}"
+                      AutomationProperties.LabeledBy="{Binding ElementName=TargetLabel}"
+                      AutomationProperties.Name="Audit target"
+                      ToolTip="Select what to audit: active map, active layout, or a portal web map"
+                      Margin="0,0,8,0"
+                      x:Name="TargetCombo">
+                <ComboBoxItem Content="Active Map"/>
+                <ComboBoxItem Content="Active Layout"/>
+                <ComboBoxItem Content="Portal Web Map"/>
+            </ComboBox>
+
+            <Button Grid.Column="2"
+                    Command="{Binding RunAuditCommand}"
+                    AutomationProperties.Name="Run accessibility audit"
+                    Padding="8,4" MinWidth="90"
+                    ToolTip="Run accessibility audit on selected target">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                               VerticalAlignment="Center" Margin="0,0,4,0"
+                               IsHitTestVisible="False"/>
+                    <TextBlock Text="Run Audit" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Portal Item ID (shown only when Portal Web Map is selected) -->
+        <Grid Grid.Row="1" Margin="8,0,8,4">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedTargetIndex}" Value="2">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Browse button + item dropdown -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Web Map:" VerticalAlignment="Center" Margin="0,0,8,0"
+                       x:Name="WebMapLabel"/>
+            <ComboBox Grid.Row="0" Grid.Column="1"
+                      ItemsSource="{Binding PortalItems}"
+                      SelectedItem="{Binding SelectedPortalItem}"
+                      DisplayMemberPath="DisplayText"
+                      IsEnabled="{Binding IsScanning, Converter={StaticResource InverseBool}}"
+                      AutomationProperties.LabeledBy="{Binding ElementName=WebMapLabel}"
+                      AutomationProperties.Name="Select a web map from portal"
+                      ToolTip="Select a web map from your portal, or type an item ID below"
+                      Margin="0,0,4,0"/>
+            <Button Grid.Row="0" Grid.Column="2"
+                    Command="{Binding BrowsePortalCommand}"
+                    AutomationProperties.Name="Load web maps from portal"
+                    ToolTip="Load web maps from your active ArcGIS portal connection"
+                    Padding="4,2" MinWidth="24">
+                <TextBlock Text="&#xE149;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           IsHitTestVisible="False"
+                           AutomationProperties.Name="Refresh"/>
+            </Button>
+
+            <!-- Manual item ID entry -->
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Item ID:" VerticalAlignment="Center" Margin="0,4,8,0"
+                       x:Name="ItemIdLabel"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                     Text="{Binding PortalItemId, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding IsScanning, Converter={StaticResource InverseBool}}"
+                     AutomationProperties.LabeledBy="{Binding ElementName=ItemIdLabel}"
+                     AutomationProperties.Name="Portal item ID"
+                     ToolTip="Enter the portal item ID directly, or select a web map above"
+                     Margin="0,4,0,0"/>
+        </Grid>
+
+        <!-- Toolbar: Fix All Auto + Color Simulation + Settings + About -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8,0,8,4"
+                    HorizontalAlignment="Right">
+            <Button Command="{Binding FixAllAutoCommand}"
+                    AutomationProperties.Name="Apply all deterministic fixes"
+                    ToolTip="Apply all deterministic fixes to current findings"
+                    Padding="6,2" Margin="0,0,4,0" FontSize="11">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                               VerticalAlignment="Center" Margin="0,0,4,0"
+                               IsHitTestVisible="False"/>
+                    <TextBlock Text="Fix All Auto" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding OpenColorSimulationCommand}"
+                    AutomationProperties.Name="Open colorblind simulation viewer"
+                    ToolTip="Open colorblind simulation viewer"
+                    Padding="6,2" Margin="0,0,4,0" FontSize="11">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                               VerticalAlignment="Center" Margin="0,0,4,0"
+                               IsHitTestVisible="False"/>
+                    <TextBlock Text="Color Sim" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding OpenSettingsCommand}"
+                    AutomationProperties.Name="Open settings"
+                    AutomationProperties.HelpText="Configure audit options such as pass finding visibility, warning margin, and colorblind safety checks"
+                    ToolTip="Open settings"
+                    Padding="6,2" Margin="0,0,4,0" FontSize="11" Width="28">
+                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           IsHitTestVisible="False"/>
+            </Button>
+            <Button Command="{Binding OpenAboutCommand}"
+                    AutomationProperties.Name="About Accessibility Auditor"
+                    AutomationProperties.HelpText="View version, author, and license information"
+                    ToolTip="About Accessibility Auditor"
+                    Padding="6,2" FontSize="11" Width="28">
+                <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           IsHitTestVisible="False"/>
+            </Button>
+        </StackPanel>
+
+        <!-- Tabbed content -->
+        <TabControl Grid.Row="3" SelectedIndex="{Binding SelectedTabIndex}" Margin="4,0,4,4"
+                    AutomationProperties.Name="Audit results by WCAG principle">
+            <TabItem Header="Dashboard"
+                     AutomationProperties.Name="Dashboard tab">
+                <local:DashboardView DataContext="{Binding DashboardVM}"/>
+            </TabItem>
+            <TabItem Header="Perceivable"
+                     AutomationProperties.Name="Perceivable findings tab">
+                <local:PrincipleView DataContext="{Binding PerceivableVM}"/>
+            </TabItem>
+            <TabItem Header="Operable"
+                     AutomationProperties.Name="Operable findings tab">
+                <local:PrincipleView DataContext="{Binding OperableVM}"/>
+            </TabItem>
+            <TabItem Header="Understandable"
+                     AutomationProperties.Name="Understandable findings tab">
+                <local:PrincipleView DataContext="{Binding UnderstandableVM}"/>
+            </TabItem>
+            <TabItem Header="Robust"
+                     AutomationProperties.Name="Robust findings tab">
+                <local:PrincipleView DataContext="{Binding RobustVM}"/>
+            </TabItem>
+            <TabItem Header="AI Settings"
+                     AutomationProperties.Name="AI fix assistance settings tab">
+                <local:LLMSettingsView DataContext="{Binding LLMSettingsVM}"/>
+            </TabItem>
+        </TabControl>
+
+        <!-- Status bar -->
+        <Grid Grid.Row="4" Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       AutomationProperties.Name="Audit status"
+                       AutomationProperties.LiveSetting="Assertive"/>
+
+            <Button Grid.Column="1" Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}"
+                    AutomationProperties.Name="Cancel running audit"
+                    ToolTip="Cancel the running audit"
+                    Padding="8,2"/>
+        </Grid>
+    </Grid>
+</UserControl>

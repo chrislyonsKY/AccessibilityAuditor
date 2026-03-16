@@ -1,0 +1,59 @@
+<controls:ProWindow x:Class="AccessibilityAuditor.Windows.AboutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
+    Title="About Accessibility Auditor"
+    Height="380" Width="420"
+    MinHeight="340" MinWidth="380"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    ShowInTaskbar="False"
+    AutomationProperties.Name="About Accessibility Auditor">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="{Binding ProductName}" FontSize="20" FontWeight="Bold" Margin="0,0,0,4"
+                       AutomationProperties.Name="{Binding ProductName}"/>
+            <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" FontSize="12"
+                       Opacity="0.65"
+                       AutomationProperties.Name="{Binding Version, StringFormat='Version {0}'}"/>
+        </StackPanel>
+
+        <!-- Details -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,0,0,12"
+                           AutomationProperties.Name="Product description"/>
+
+                <TextBlock Text="Author" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                <TextBlock Text="{Binding Author}" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Organization" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                <TextBlock Text="{Binding Organization}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Framework" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                <TextBlock Text="{Binding Framework}" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Standard" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                <TextBlock Text="{Binding Standard}" Margin="0,0,0,4"/>
+                <TextBlock Text="{Binding RuleCount}" Opacity="0.65" FontSize="11" Margin="0,0,0,8"/>
+
+                <TextBlock Text="{Binding Copyright}" Opacity="0.65" FontSize="11" Margin="0,4,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Close button -->
+        <Button Grid.Row="2" Content="Close" Width="80"
+                HorizontalAlignment="Right" Margin="0,16,0,0"
+                IsCancel="True" IsDefault="True"
+                AutomationProperties.Name="Close about window"
+                ToolTip="Close this window"/>
+    </Grid>
+</controls:ProWindow>

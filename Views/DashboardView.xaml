@@ -1,0 +1,184 @@
+<UserControl x:Class="AccessibilityAuditor.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:AccessibilityAuditor.Views.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="320">
+
+    <UserControl.Resources>
+        <converters:ScoreToColorConverter x:Key="ScoreToColor"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="8"
+                  AutomationProperties.Name="Dashboard results">
+        <StackPanel>
+
+            <!-- No results placeholder -->
+            <TextBlock Text="Run an audit to see results."
+                       Visibility="{Binding HasResults, Converter={StaticResource InverseBoolToVis}}"
+                       HorizontalAlignment="Center" Margin="0,40,0,0"
+                       FontStyle="Italic" Opacity="0.6"
+                       AutomationProperties.Name="No audit results yet. Run an audit to see results."/>
+
+            <!-- Results panel -->
+            <StackPanel Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+
+                <!-- Target name -->
+                <TextBlock Text="{Binding TargetName}" FontWeight="Bold" FontSize="14" Margin="0,0,0,12"
+                           AutomationProperties.Name="{Binding TargetName}"/>
+
+                <!-- Overall score -->
+                <TextBlock Text="Overall Score" FontWeight="SemiBold" Margin="0,0,0,4"
+                           x:Name="OverallScoreLabel"/>
+                <Grid Margin="0,0,0,12">
+                    <ProgressBar Value="{Binding OverallScore}" Maximum="100" Height="24"
+                                 Foreground="{Binding OverallScore, Converter={StaticResource ScoreToColor}}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=OverallScoreLabel}"
+                                 AutomationProperties.Name="{Binding OverallScore, StringFormat='Overall compliance score: {0} out of 100'}"/>
+                    <TextBlock Text="{Binding OverallScore, StringFormat='{}{0}/100'}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"
+                               Foreground="White"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Per-principle scores -->
+                <TextBlock Text="Scores by Principle" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                <!-- Perceivable -->
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Perceivable" FontWeight="SemiBold"
+                               x:Name="PerceivableLabel"/>
+                    <TextBlock Grid.Column="1" Text="{Binding PerceivableSummary}" FontSize="11"
+                               Opacity="0.65" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Margin="0,0,0,8">
+                    <ProgressBar Value="{Binding PerceivableScore}" Maximum="100" Height="18"
+                                 Foreground="{Binding PerceivableScore, Converter={StaticResource ScoreToColor}}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=PerceivableLabel}"
+                                 AutomationProperties.Name="{Binding PerceivableScore, StringFormat='Perceivable score: {0} out of 100'}"/>
+                    <TextBlock Text="{Binding PerceivableScore, StringFormat='{}{0}/100'}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                               Foreground="White"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Operable -->
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Operable" FontWeight="SemiBold"
+                               x:Name="OperableLabel"/>
+                    <TextBlock Grid.Column="1" Text="{Binding OperableSummary}" FontSize="11"
+                               Opacity="0.65" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Margin="0,0,0,8">
+                    <ProgressBar Value="{Binding OperableScore}" Maximum="100" Height="18"
+                                 Foreground="{Binding OperableScore, Converter={StaticResource ScoreToColor}}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=OperableLabel}"
+                                 AutomationProperties.Name="{Binding OperableScore, StringFormat='Operable score: {0} out of 100'}"/>
+                    <TextBlock Text="{Binding OperableScore, StringFormat='{}{0}/100'}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                               Foreground="White"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Understandable -->
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Understandable" FontWeight="SemiBold"
+                               x:Name="UnderstandableLabel"/>
+                    <TextBlock Grid.Column="1" Text="{Binding UnderstandableSummary}" FontSize="11"
+                               Opacity="0.65" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Margin="0,0,0,8">
+                    <ProgressBar Value="{Binding UnderstandableScore}" Maximum="100" Height="18"
+                                 Foreground="{Binding UnderstandableScore, Converter={StaticResource ScoreToColor}}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=UnderstandableLabel}"
+                                 AutomationProperties.Name="{Binding UnderstandableScore, StringFormat='Understandable score: {0} out of 100'}"/>
+                    <TextBlock Text="{Binding UnderstandableScore, StringFormat='{}{0}/100'}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                               Foreground="White"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Robust -->
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Robust" FontWeight="SemiBold"
+                               x:Name="RobustLabel"/>
+                    <TextBlock Grid.Column="1" Text="{Binding RobustSummary}" FontSize="11"
+                               Opacity="0.65" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Margin="0,0,0,12">
+                    <ProgressBar Value="{Binding RobustScore}" Maximum="100" Height="18"
+                                 Foreground="{Binding RobustScore, Converter={StaticResource ScoreToColor}}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=RobustLabel}"
+                                 AutomationProperties.Name="{Binding RobustScore, StringFormat='Robust score: {0} out of 100'}"/>
+                    <TextBlock Text="{Binding RobustScore, StringFormat='{}{0}/100'}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                               Foreground="White"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Finding counts -->
+                <TextBlock Text="Finding Summary" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <Grid AutomationProperties.Name="Finding severity counts">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="#E04343"
+                                   VerticalAlignment="Center" Margin="0,0,4,0"
+                                   AutomationProperties.Name="Fail"/>
+                        <TextBlock Text="{Binding FailCount, StringFormat='{}{0} Fail'}"
+                                   AutomationProperties.Name="{Binding FailCount, StringFormat='{}{0} failures'}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="#E5A100"
+                                   VerticalAlignment="Center" Margin="0,0,4,0"
+                                   AutomationProperties.Name="Warning"/>
+                        <TextBlock Text="{Binding WarningCount, StringFormat='{}{0} Warning'}"
+                                   AutomationProperties.Name="{Binding WarningCount, StringFormat='{}{0} warnings'}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="#3DA63D"
+                                   VerticalAlignment="Center" Margin="0,0,4,0"
+                                   AutomationProperties.Name="Pass"/>
+                        <TextBlock Text="{Binding PassCount, StringFormat='{}{0} Pass'}"
+                                   AutomationProperties.Name="{Binding PassCount, StringFormat='{}{0} passed'}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Text="&#xE7B3;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="#4D8FD6"
+                                   VerticalAlignment="Center" Margin="0,0,4,0"
+                                   AutomationProperties.Name="Manual review"/>
+                        <TextBlock Text="{Binding ManualReviewCount, StringFormat='{}{0} Review'}"
+                                   AutomationProperties.Name="{Binding ManualReviewCount, StringFormat='{}{0} manual reviews'}"/>
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
