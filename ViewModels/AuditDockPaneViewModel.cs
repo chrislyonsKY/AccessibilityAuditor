@@ -89,6 +89,10 @@ namespace AccessibilityAuditor.ViewModels
             // v2: AI Settings ViewModel
             LLMSettingsVM = new LLMSettingsViewModel(_credentialProvider, _llmProviders);
 
+            // v2: AI Chat ViewModel
+            AIChatVM = new AIChatViewModel(_credentialProvider, _llmProviders, GetAllFindings);
+            LLMSettingsVM.OnKeyStatusChanged = () => AIChatVM.RefreshAvailability();
+
             // Restore last target selection
             _selectedTargetIndex = _settings.LastTargetIndex;
 
@@ -97,6 +101,19 @@ namespace AccessibilityAuditor.ViewModels
 
         /// <summary>Gets the AI Settings tab ViewModel.</summary>
         public LLMSettingsViewModel LLMSettingsVM { get; }
+
+        /// <summary>Gets the AI Chat tab ViewModel.</summary>
+        public AIChatViewModel AIChatVM { get; }
+
+        /// <summary>Returns all current findings across all principle tabs.</summary>
+        private System.Collections.Generic.IReadOnlyList<Finding> GetAllFindings()
+        {
+            return PerceivableVM.Findings
+                .Concat(OperableVM.Findings)
+                .Concat(UnderstandableVM.Findings)
+                .Concat(RobustVM.Findings)
+                .ToList();
+        }
 
         /// <summary>Applies a fix for a single finding via the fix engine.</summary>
         private async Task ApplyFixAsync(Finding finding)

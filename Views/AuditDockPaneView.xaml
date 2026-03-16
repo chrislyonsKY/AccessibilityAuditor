@@ -181,6 +181,10 @@
                      AutomationProperties.Name="Robust findings tab">
                 <local:PrincipleView DataContext="{Binding RobustVM}"/>
             </TabItem>
+            <TabItem Header="AI Chat"
+                     AutomationProperties.Name="AI accessibility chat tab">
+                <local:AIChatView DataContext="{Binding AIChatVM}"/>
+            </TabItem>
             <TabItem Header="AI Settings"
                      AutomationProperties.Name="AI fix assistance settings tab">
                 <local:LLMSettingsView DataContext="{Binding LLMSettingsVM}"/>

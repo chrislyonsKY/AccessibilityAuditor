@@ -1,0 +1,147 @@
+<UserControl x:Class="AccessibilityAuditor.Views.AIChatView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:AccessibilityAuditor.Views.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="320">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Unavailable overlay when no key configured -->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"
+                    Visibility="{Binding IsAvailable, Converter={StaticResource InverseBoolToVis}}">
+            <TextBlock Text="&#xE8D7;" FontFamily="Segoe MDL2 Assets" FontSize="32"
+                       HorizontalAlignment="Center" Opacity="0.4" Margin="0,0,0,12"/>
+            <TextBlock Text="AI Chat requires an API key"
+                       FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"
+                       Margin="0,0,0,8"/>
+            <TextBlock Text="Configure a key in the AI Settings tab to enable chat."
+                       TextWrapping="Wrap" TextAlignment="Center" Opacity="0.6" FontSize="11.5"/>
+        </StackPanel>
+
+        <!-- Chat interface (visible when key is configured) -->
+        <Grid Visibility="{Binding IsAvailable, Converter={StaticResource BoolToVis}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <DockPanel Grid.Row="0" Margin="8,8,8,4">
+                <Button DockPanel.Dock="Right" Content="Clear"
+                        Command="{Binding ClearCommand}"
+                        AutomationProperties.Name="Clear chat history"
+                        ToolTip="Clear conversation" Padding="6,2" FontSize="11"/>
+                <TextBlock Text="AI Accessibility Assistant" FontWeight="Bold" FontSize="13"
+                           VerticalAlignment="Center"/>
+            </DockPanel>
+
+            <!-- Message list -->
+            <ListBox Grid.Row="1" ItemsSource="{Binding Messages}"
+                     x:Name="MessagesList"
+                     Margin="4,0,4,4"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     AutomationProperties.Name="Chat messages"
+                     BorderThickness="0" Background="Transparent">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Focusable" Value="False"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="4,4" Padding="8,6" CornerRadius="6" MaxWidth="280"
+                                AutomationProperties.Name="{Binding Content}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#1A4D8FD6"/>
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                            <Setter Property="Background" Value="#1A3DA63D"/>
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel>
+                                <TextBlock FontWeight="SemiBold" FontSize="10" Opacity="0.6" Margin="0,0,0,2">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Assistant"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                    <Setter Property="Text" Value="You"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Progress indicator -->
+            <ProgressBar Grid.Row="2" IsIndeterminate="True" Height="3" Margin="8,0"
+                         Visibility="{Binding IsSending, Converter={StaticResource BoolToVis}}"
+                         AutomationProperties.Name="Sending message"/>
+
+            <!-- Input area -->
+            <Grid Grid.Row="3" Margin="8,4,8,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                         x:Name="ChatInput"
+                         AcceptsReturn="False" TextWrapping="Wrap" MaxHeight="80"
+                         VerticalScrollBarVisibility="Auto"
+                         AutomationProperties.Name="Chat message input"
+                         ToolTip="Ask about accessibility issues, WCAG compliance, or how to fix findings"
+                         KeyDown="ChatInput_KeyDown"
+                         Margin="0,0,4,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Vertical">
+                    <Button Command="{Binding SendCommand}"
+                            AutomationProperties.Name="Send message"
+                            ToolTip="Send message (Enter)" Padding="8,6">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSending}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="&#xE724;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                   IsHitTestVisible="False"/>
+                    </Button>
+                    <Button Command="{Binding StopCommand}"
+                            AutomationProperties.Name="Stop generation"
+                            ToolTip="Stop" Padding="8,6"
+                            Visibility="{Binding IsSending, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="&#xE71A;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                   IsHitTestVisible="False"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -20,6 +20,12 @@ namespace AccessibilityAuditor.ViewModels
         private readonly CredentialProvider _credentials;
         private readonly ILLMProvider[] _providers;
 
+        /// <summary>
+        /// Callback invoked whenever key configuration changes.
+        /// Used to notify the AI Chat tab of availability changes.
+        /// </summary>
+        public Action? OnKeyStatusChanged { get; set; }
+
         /// <summary>Initialises the ViewModel with required services.</summary>
         public LLMSettingsViewModel(
             CredentialProvider credentials,
@@ -159,6 +165,7 @@ namespace AccessibilityAuditor.ViewModels
         private void RefreshKeyStatus()
         {
             IsKeyConfigured = _credentials.IsConfigured(SelectedProvider);
+            OnKeyStatusChanged?.Invoke();
         }
     }
 }
