@@ -293,6 +293,21 @@ namespace AccessibilityAuditor.ViewModels
             }
 
             var results = await _fixEngine.ApplyAllDeterministicAsync(allFindings, CancellationToken.None);
+
+            // Stamp results onto individual findings so rows update visually
+            foreach (var (finding, result) in results)
+            {
+                finding.IsFixed = result.Status == FixStatus.Applied;
+                finding.FixStatusText = result.Status switch
+                {
+                    FixStatus.Applied => "Fixed",
+                    FixStatus.Suggested when result.SuggestedContent is not null =>
+                        $"Suggested: {result.SuggestedContent}",
+                    FixStatus.Suggested => "Suggestion available",
+                    _ => null // Don't show anything for failures in bulk mode
+                };
+            }
+
             int applied = results.Count(r => r.Result.Status is FixStatus.Applied or FixStatus.Suggested);
             int failed = results.Count(r => r.Result.Status == FixStatus.Failed);
             StatusText = $"Fix All: {applied} fixes applied, {failed} failed, " +

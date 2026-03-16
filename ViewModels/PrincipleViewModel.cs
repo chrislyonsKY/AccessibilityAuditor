@@ -201,6 +201,17 @@ namespace AccessibilityAuditor.ViewModels
                 var result = await strategy.ApplyFixAsync(finding, CancellationToken.None);
                 LastFixResult = result;
                 LastFixMessage = result.Summary;
+
+                // Stamp the result onto the finding so the row updates visually
+                finding.IsFixed = result.Status == FixStatus.Applied;
+                finding.FixStatusText = result.Status switch
+                {
+                    FixStatus.Applied => "Fixed",
+                    FixStatus.Suggested when result.SuggestedContent is not null =>
+                        $"Suggested: {result.SuggestedContent}",
+                    FixStatus.Suggested => "Suggestion available",
+                    _ => $"Failed: {result.Summary}"
+                };
             }
             catch (Exception ex)
             {

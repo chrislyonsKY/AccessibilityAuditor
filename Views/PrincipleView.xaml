@@ -187,6 +187,41 @@
                             <TextBlock Text="{Binding Remediation}" TextWrapping="Wrap"
                                        FontSize="11" Foreground="#4D8FD6" Margin="0,4,0,0"
                                        Visibility="{Binding Remediation, TargetNullValue=Collapsed, FallbackValue=Collapsed}"/>
+
+                            <!-- Fix status indicator (shown after a fix is attempted) -->
+                            <Border Margin="0,4,0,0" CornerRadius="3" Padding="6,2"
+                                    Visibility="{Binding FixStatusText, TargetNullValue=Collapsed, FallbackValue=Collapsed}"
+                                    AutomationProperties.Name="{Binding FixStatusText}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#204D8FD6"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFixed}" Value="True">
+                                                <Setter Property="Background" Value="#203DA63D"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="&#xE7BA;"/>
+                                                <Setter Property="Foreground" Value="#4D8FD6"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsFixed}" Value="True">
+                                                        <Setter Property="Text" Value="&#xE73E;"/>
+                                                        <Setter Property="Foreground" Value="#3DA63D"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding FixStatusText}" FontSize="11" TextWrapping="Wrap"
+                                               Opacity="0.85"/>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
 
                         <!-- Fix button — collapsed when no fix strategy is available -->
